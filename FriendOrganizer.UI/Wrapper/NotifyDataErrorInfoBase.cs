@@ -46,7 +46,10 @@ namespace FriendOrganizer.UI.Wrapper
         {
             if (_errorsByPropertyName.ContainsKey(propertyName))
             {
+
+                //edited!
                 _errorsByPropertyName.Remove(propertyName);
+
                 OnErrorsChanged(propertyName);
             }
         }
