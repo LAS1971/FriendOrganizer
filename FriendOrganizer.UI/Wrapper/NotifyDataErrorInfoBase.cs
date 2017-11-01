@@ -46,7 +46,8 @@ namespace FriendOrganizer.UI.Wrapper
         {
             if (_errorsByPropertyName.ContainsKey(propertyName))
             {
-
+                //Will this go in?
+                //This is another edit. Hopefully it will illustrate staging.
                 //edited!
                 _errorsByPropertyName.Remove(propertyName);
 
