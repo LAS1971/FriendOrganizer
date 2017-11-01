@@ -67,10 +67,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Data\FriendDataService.cs" />
-    <Compile Include="Data\IFriendDataService.cs" />
-    <Compile Include="Data\IFriendLookupDataService.cs" />
-    <Compile Include="Data\LookupDataService.cs" />
+    <Compile Include="Data\Repositories\FriendRepository.cs" />
+    <Compile Include="Data\Lookups\IFriendLookupDataService.cs" />
+    <Compile Include="Data\Lookups\LookupDataService.cs" />
+    <Compile Include="Data\Repositories\IFriendRepository.cs" />
     <Compile Include="Event\AfterFriendSaveEvent.cs" />
     <Compile Include="Event\OpenFriendDetailViewEvent.cs" />
     <Compile Include="Startup\Bootstrapper.cs" />

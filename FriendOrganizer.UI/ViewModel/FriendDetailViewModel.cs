@@ -7,28 +7,28 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System;
 using FriendOrganizer.UI.Wrapper;
+using FriendOrganizer.UI.Data.Repositories;
 
 namespace FriendOrganizer.UI.ViewModel
 {
     public class FriendDetailViewModel : ViewModelBase, IFriendDetailViewModel
     {
-        private IFriendDataService _dataService;
+        private IFriendRepository _friendRepository;
         private IEventAggregator _eventAggregator;
         private FriendWrapper _friend;
 
-        public FriendDetailViewModel(IFriendDataService dataService, IEventAggregator eventAggregator)
+        public FriendDetailViewModel(IFriendRepository friendRepository, IEventAggregator eventAggregator)
         {
-            _dataService = dataService;
+            _friendRepository = friendRepository;
 
             _eventAggregator = eventAggregator;
-            _eventAggregator.GetEvent<OpenFriendDetailViewEvent>().Subscribe(OnOpenFriendDetailViewAsync);
 
             SaveCommand = new DelegateCommand(OnSaveExecute, OnSaveCanExecute);
         }
 
         public async Task LoadAsync(int friendId)
         {
-            var friend = await _dataService.GetByIdAsync(friendId);
+            var friend = await _friendRepository.GetByIdAsync(friendId);
 
             Friend = new FriendWrapper(friend);
 
@@ -57,7 +57,7 @@ namespace FriendOrganizer.UI.ViewModel
 
         private async void OnSaveExecute()
         {
-            await _dataService.SaveAsync(Friend.Model);
+            await _friendRepository.SaveAsync();
 
             _eventAggregator.GetEvent<AfterFriendSaveEvent>().Publish(new AfterFriendSavedEventArgs { Id = Friend.Id, DisplayMember = $"{Friend.FirstName} {Friend.LastName}" });
         }
@@ -65,11 +65,6 @@ namespace FriendOrganizer.UI.ViewModel
         private bool OnSaveCanExecute()
         {
             return Friend != null && !Friend.HasErrors;
-        }
-
-        private async void OnOpenFriendDetailViewAsync(int friendId)
-        {
-            await LoadAsync(friendId);
         }
     }
 }
