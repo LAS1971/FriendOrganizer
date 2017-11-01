@@ -1,9 +1,7 @@
-﻿using FriendOrganizer.Model;
-using FriendOrganizer.UI.Data;
-using FriendOrganizer.UI.Event;
+﻿using FriendOrganizer.UI.Event;
+using FriendOrganizer.UI.View.Services;
 using Prism.Events;
 using System;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace FriendOrganizer.UI.ViewModel
@@ -13,13 +11,15 @@ namespace FriendOrganizer.UI.ViewModel
         private IEventAggregator _eventAggregator;
         private IFriendDetailViewModel _friendDetailViewModel;
         private Func<IFriendDetailViewModel> _friendDetailViewModelCreator;
+        private IMessageDialogService _messageDialogService;
 
         public INavigationViewModel NavigationViewModel { get; }
 
-        public MainViewModel(INavigationViewModel navigationViewModel, Func<IFriendDetailViewModel> friendDetailViewModelCreator, IEventAggregator eventAggregator)
+        public MainViewModel(INavigationViewModel navigationViewModel, Func<IFriendDetailViewModel> friendDetailViewModelCreator, IEventAggregator eventAggregator, IMessageDialogService messageDialogService)
         {
             _friendDetailViewModelCreator = friendDetailViewModelCreator;
             _eventAggregator = eventAggregator;
+            _messageDialogService = messageDialogService;
 
             _eventAggregator.GetEvent<OpenFriendDetailViewEvent>().Subscribe(OnOpenFriendDetailViewAsync);
 
@@ -43,6 +43,17 @@ namespace FriendOrganizer.UI.ViewModel
 
         private async void OnOpenFriendDetailViewAsync(int friendId)
         {
+
+            if (FriendDetailViewModel != null && FriendDetailViewModel.HasChanges)
+            {
+                var result = _messageDialogService.ShowOkCancelDialog("You have made changes. Navigate away?", "Question");
+
+                if (result == MessageDialogResult.Cancel)
+                {
+                    return;
+                }
+            }
+
             FriendDetailViewModel = _friendDetailViewModelCreator();
 
             await FriendDetailViewModel.LoadAsync(friendId);
