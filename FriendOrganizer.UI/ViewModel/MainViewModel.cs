@@ -46,7 +46,7 @@ namespace FriendOrganizer.UI.ViewModel
 
             if (FriendDetailViewModel != null && FriendDetailViewModel.HasChanges)
             {
-                var result = _messageDialogService.ShowOkCancelDialog("You have made changes. Navigate away?", "Question");
+                var result = _messageDialogService.ShowOkCancelDialog("You have made changes.\r\nNavigate away?", "Question");
 
                 if (result == MessageDialogResult.Cancel)
                 {
