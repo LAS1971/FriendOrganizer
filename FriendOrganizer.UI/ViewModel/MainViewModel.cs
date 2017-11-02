@@ -1,8 +1,10 @@
 ﻿using FriendOrganizer.UI.Event;
 using FriendOrganizer.UI.View.Services;
+using Prism.Commands;
 using Prism.Events;
 using System;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace FriendOrganizer.UI.ViewModel
 {
@@ -13,6 +15,7 @@ namespace FriendOrganizer.UI.ViewModel
         private Func<IFriendDetailViewModel> _friendDetailViewModelCreator;
         private IMessageDialogService _messageDialogService;
 
+        public ICommand CreateNewFriendCommand { get;  }
         public INavigationViewModel NavigationViewModel { get; }
 
         public MainViewModel(INavigationViewModel navigationViewModel, Func<IFriendDetailViewModel> friendDetailViewModelCreator, IEventAggregator eventAggregator, IMessageDialogService messageDialogService)
@@ -22,6 +25,9 @@ namespace FriendOrganizer.UI.ViewModel
             _messageDialogService = messageDialogService;
 
             _eventAggregator.GetEvent<OpenFriendDetailViewEvent>().Subscribe(OnOpenFriendDetailViewAsync);
+            _eventAggregator.GetEvent<AfterFriendDeletedEvent>().Subscribe(AfterFriendDeleted);
+
+            CreateNewFriendCommand = new DelegateCommand(OnCreateNewFriendExecute);
 
             NavigationViewModel = navigationViewModel;
         }
@@ -41,7 +47,7 @@ namespace FriendOrganizer.UI.ViewModel
             await NavigationViewModel.LoadAsync();
         }
 
-        private async void OnOpenFriendDetailViewAsync(int friendId)
+        private async void OnOpenFriendDetailViewAsync(int? friendId)
         {
 
             if (FriendDetailViewModel != null && FriendDetailViewModel.HasChanges)
@@ -57,6 +63,16 @@ namespace FriendOrganizer.UI.ViewModel
             FriendDetailViewModel = _friendDetailViewModelCreator();
 
             await FriendDetailViewModel.LoadAsync(friendId);
+        }
+
+        private void OnCreateNewFriendExecute()
+        {
+            OnOpenFriendDetailViewAsync(null);
+        }
+
+        private void AfterFriendDeleted(int friendId)
+        {
+            FriendDetailViewModel = null;
         }
     }
 }
